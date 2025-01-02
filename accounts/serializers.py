@@ -38,7 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def validate_email(self, value):
-        if not "@" in value:
+        if "@" not in value:
             raise serializers.ValidationError(
                 "Please enter a valid email address."
             )
