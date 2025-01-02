@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 3rd party applications
+    "django_filters",
     "rest_framework",
     "rest_framework_simplejwt",
-    # custom applications
+    # project application
+    "borrowing_service",
     "accounts",
     "books_service"
 ]
@@ -99,6 +101,9 @@ DATABASES = {
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
     ],
 }
 
