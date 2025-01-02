@@ -37,14 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
-    def validate_email(self, value):
-        if "@" not in value:
-            raise serializers.ValidationError(
-                "Please enter a valid email address."
-            )
-
-        return value
-
     def validate(self, attrs):
         first_name = attrs.get("first_name")
         last_name = attrs.get("last_name")
