@@ -43,7 +43,7 @@ class BorrowingViewSet(
         if self.action == "retrieve":
             return BorrowingDetailSerializer
 
-        if self.action == "return":
+        if self.action == "return_book":
             return BorrowingReturnSerializer
 
         return BorrowingCreateSerializer
