@@ -47,3 +47,5 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "The first name and the last name must contain only letters."
             )
+
+        return attrs
