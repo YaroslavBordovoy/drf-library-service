@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiParameter
 
 from borrowing_service.filters import BorrowingFilter
 from borrowing_service.serializers import (
@@ -23,8 +25,22 @@ class BorrowingViewSet(
     queryset = Borrowing.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = BorrowingFilter
-    # permission_classes = <fill it>
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name="user_id", type=int, location="path"),
+            OpenApiParameter(name="is_active", type=bool, location="path"),
+        ],
+        description="Return a borrowed book to the library inventory",
+        responses={
+            200: {
+                "type": "object",
+                "properties": {"detail": {"type": "string"}},
+            }
+        },
+        tags=["borrowings"],
+        operation_id="return_borrowed_book",
+    )
     @action(methods=["POST"], detail=True, url_path="return")
     def return_book(self, request, pk=None):
         borrowing = self.get_object()
