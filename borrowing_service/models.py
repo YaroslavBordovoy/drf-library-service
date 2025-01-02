@@ -34,12 +34,12 @@ class Borrowing(models.Model):
     def __str__(self):
         if self.actual_return_date:
             return (
-                f"{book.title} "
+                f"{self.book.title} "
                 f"borrowed {self.borrow_date} and "
                 f"returned {self.actual_return_date}"
             )
         return (
-            f"{book.title} "
+            f"{self.book.title} "
             f"borrowed {self.borrow_date} and "
             f"expected to return {self.expected_return_date}"
         )
