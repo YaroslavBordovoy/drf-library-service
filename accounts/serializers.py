@@ -6,7 +6,14 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ("id", "email", "first_name", "last_name", "password", "is_staff")
+        fields = (
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "is_staff",
+        )
         read_only_fields = ("id", "is_staff")
         extra_kwargs = {
             "password": {
@@ -32,7 +39,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         if not "@" in value:
-            raise serializers.ValidationError("Please enter a valid email address.")
+            raise serializers.ValidationError(
+                "Please enter a valid email address."
+            )
 
         return value
 
@@ -41,7 +50,9 @@ class UserSerializer(serializers.ModelSerializer):
         last_name = attrs.get("last_name")
 
         if first_name is None or last_name is None:
-            raise serializers.ValidationError("Please provide your first name and last name.")
+            raise serializers.ValidationError(
+                "Please provide your first name and last name."
+            )
 
         if not first_name.isalpha() or not last_name.isalpha():
             raise serializers.ValidationError(
