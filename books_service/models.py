@@ -2,9 +2,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from enum import Enum
 
+
 class Cover(Enum):
     HARD = "HARD"
     SOFT = "SOFT"
+
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
