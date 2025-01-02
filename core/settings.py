@@ -88,18 +88,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'library',  # Назва вашої бази даних
-#         'USER': 'postgres',     # Ім'я користувача PostgreSQL
-#         'PASSWORD': 'postgres', # Пароль для користувача PostgreSQL
-#         'HOST': 'db',           # Хост (ім'я сервісу Docker)
-#         'PORT': '5432',         # Порт PostgreSQL
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
