@@ -15,7 +15,6 @@ class Borrowing(models.Model):
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(blank=True, null=True)
 
-
     @staticmethod
     def validate_borrowing(borrow_date, expected_date):
         if expected_date < borrow_date:
@@ -25,23 +24,22 @@ class Borrowing(models.Model):
 
     def clean(self):
         Borrowing.validate_borrowing(
-            self.borrow_date,
-            self.expected_return_date
+            self.borrow_date, self.expected_return_date
         )
 
-    def save(
-        self,
-        *args,
-        **kwargs
-    ):
+    def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
 
     def __str__(self):
         if self.actual_return_date:
-            return (f"{book.title} "
-                    f"borrowed {self.borrow_date} and "
-                    f"returned {self.actual_return_date}")
-        return (f"{book.title} "
+            return (
+                f"{book.title} "
                 f"borrowed {self.borrow_date} and "
-                f"expected to return {self.expected_return_date}")
+                f"returned {self.actual_return_date}"
+            )
+        return (
+            f"{book.title} "
+            f"borrowed {self.borrow_date} and "
+            f"expected to return {self.expected_return_date}"
+        )
