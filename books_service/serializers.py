@@ -1,15 +1,16 @@
 from rest_framework import serializers
 from .models import Book
 
+
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ["id", "title", "author"]
+        fields = ("id", "title", "author")
 
 class BookDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "cover", "inventory", "daily_fee"]
+        fields = ("id", "title", "author", "cover", "inventory", "daily_fee")
 
     def validate_inventory(self, value):
         if value < 0:
