@@ -3,7 +3,7 @@ from .models import Book, Cover
 from django.core.exceptions import ValidationError
 
 from rest_framework.test import APITestCase
-from .serializers import BookDetailSerializer, BookListSerializer
+from .serializers import BookDetailSerializer
 
 
 class BookModelTest(TestCase):
