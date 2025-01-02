@@ -8,7 +8,7 @@ from borrowing_service.models import Borrowing
 
 class BorrowingListSerializer(serializers.ModelSerializer):
     book = serializers.CharField(
-        source="book_service.book.name", read_only=True
+        source="book_service.book.title", read_only=True
     )
 
     class Meta:
