@@ -1,2 +1,7 @@
 .idea
 **__pychache__
+db.sqlite3
+.vscode
+.venv
+venv
+.env
