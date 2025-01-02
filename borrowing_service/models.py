@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 class Borrowing(models.Model):
     book = models.ForeignKey(
-        "book_service.Book", on_delete=CASCADE, related_name="borrowings"
+        "books_service.Book", on_delete=CASCADE, related_name="borrowings"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=CASCADE, related_name="borrowings"

@@ -3,12 +3,13 @@ from datetime import datetime
 from django.db import transaction
 from rest_framework import serializers
 
+from books_service.serializers import BookDetailSerializer
 from borrowing_service.models import Borrowing
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
     book = serializers.CharField(
-        source="book_service.book.title", read_only=True
+        source="books_service.book.title", read_only=True
     )
     user = serializers.CharField(
         source="accounts.user.email", read_only=True
@@ -27,7 +28,7 @@ class BorrowingListSerializer(serializers.ModelSerializer):
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
-    # book = BookDetailSerializer(read_only=True)
+    book = BookDetailSerializer(read_only=True)
 
     class Meta:
         model = Borrowing
