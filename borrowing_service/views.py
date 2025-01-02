@@ -36,6 +36,11 @@ class BorrowingViewSet(
             status=status.HTTP_200_OK,
         )
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(user=self.request.user)
+
     def get_serializer_class(self):
         if self.action == "list":
             return BorrowingListSerializer
