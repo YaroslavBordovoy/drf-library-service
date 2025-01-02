@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     # custom applications
     "accounts",
+    "books_service"
 ]
 
 MIDDLEWARE = [
