@@ -9,7 +9,7 @@ class BookListSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "author")
 
     def validate_author(self, value):
-        if not re.match("^[A-Za-z ]+$", value):
+        if not all(part.isalpha() for part in value.split()):
             raise serializers.ValidationError(
                 "Author name must contain only letters and spaces."
             )
@@ -22,7 +22,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "author", "cover", "inventory", "daily_fee")
 
     def validate_author(self, value):
-        if not re.match("^[A-Za-z ]+$", value):
+        if not all(part.isalpha() for part in value.split()):
             raise serializers.ValidationError(
                 "Author name must contain only letters and spaces."
             )
