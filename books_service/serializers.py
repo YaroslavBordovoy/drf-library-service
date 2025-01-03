@@ -7,6 +7,7 @@ class BookListSerializer(serializers.ModelSerializer):
         model = Book
         fields = ("id", "title", "author")
 
+
 class BookDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
@@ -19,5 +20,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
 
     def validate_daily_fee(self, value):
         if value <= 0:
-            raise serializers.ValidationError("Daily fee must be greater than 0.")
+            raise serializers.ValidationError(
+                "Daily fee must be greater than 0."
+            )
         return value

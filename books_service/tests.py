@@ -13,7 +13,7 @@ class BookModelTest(TestCase):
             author="Author1",
             cover=Cover.HARD.name,
             inventory=-5,
-            daily_fee=10.00
+            daily_fee=10.00,
         )
         with self.assertRaises(ValidationError):
             book.full_clean()
@@ -24,7 +24,7 @@ class BookModelTest(TestCase):
             author="Author2",
             cover=Cover.SOFT.name,
             inventory=10,
-            daily_fee=-1.00
+            daily_fee=-1.00,
         )
         with self.assertRaises(ValidationError):
             book.full_clean()
@@ -35,13 +35,14 @@ class BookModelTest(TestCase):
             author="Author3",
             cover=Cover.SOFT.name,
             inventory=10,
-            daily_fee=5.00
+            daily_fee=5.00,
         )
 
         try:
             book.full_clean()
         except ValidationError:
             self.fail("Book model raised ValidationError")
+
 
 class BookSerializerTest(APITestCase):
     def test_daily_fee_must_be_positive(self):
@@ -50,13 +51,14 @@ class BookSerializerTest(APITestCase):
             "author": "Test Author",
             "cover": "SOFT",
             "inventory": 10,
-            "daily_fee": -5.00
+            "daily_fee": -5.00,
         }
         serializer = BookDetailSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("daily_fee", serializer.errors)
         self.assertEqual(
-            serializer.errors["daily_fee"][0], "Daily fee must be greater than 0."
+            serializer.errors["daily_fee"][0],
+            "Daily fee must be greater than 0.",
         )
 
     def test_valid_book_data(self):
@@ -65,9 +67,8 @@ class BookSerializerTest(APITestCase):
             "author": "Test Author",
             "cover": "HARD",
             "inventory": 10,
-            "daily_fee": 5.00
+            "daily_fee": 5.00,
         }
         serializer = BookDetailSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertEqual(serializer.validated_data, data)
-
