@@ -1,5 +1,8 @@
+from datetime import date
+
 from rest_framework import mixins, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django_filters import rest_framework as filters
@@ -28,8 +31,13 @@ class BorrowingViewSet(
     @action(methods=["POST"], detail=True, url_path="return")
     def return_book(self, request, pk=None):
         borrowing = self.get_object()
+        if borrowing.actual_return_date:
+            raise ValidationError(
+                    {f"{borrowing.book.title}": "This book is already returned"}
+                )
         borrowing.book.inventory += 1
         borrowing.book.save()
+        borrowing.actual_return_date = date.today()
         borrowing.save()
         return Response(
             {"detail": f"{borrowing.book.title} successfully returned!"},
@@ -52,3 +60,6 @@ class BorrowingViewSet(
             return BorrowingReturnSerializer
 
         return BorrowingCreateSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
