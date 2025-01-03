@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     # project application
     "borrowing_service",
     "accounts",
-    "books_service"
+    "books_service",
+    "payments_service",
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
