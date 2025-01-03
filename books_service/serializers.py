@@ -13,6 +13,13 @@ class BookDetailSerializer(serializers.ModelSerializer):
         model = Book
         fields = ("id", "title", "author", "cover", "inventory", "daily_fee")
 
+    def validate_author(self, value):
+        if not value.isalpha():
+            raise serializers.ValidationError(
+                "Author name must contain only letters."
+            )
+        return value
+
     def validate_inventory(self, value):
         if value < 0:
             raise serializers.ValidationError("Inventory cannot be negative.")
