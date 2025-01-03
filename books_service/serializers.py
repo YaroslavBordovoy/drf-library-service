@@ -1,11 +1,19 @@
 from rest_framework import serializers
 from .models import Book
+import re
 
 
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ("id", "title", "author")
+
+    def validate_author(self, value):
+        if not re.match("^[A-Za-z ]+$", value):
+            raise serializers.ValidationError(
+                "Author name must contain only letters and spaces."
+            )
+        return value
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
@@ -14,9 +22,9 @@ class BookDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "author", "cover", "inventory", "daily_fee")
 
     def validate_author(self, value):
-        if not value.isalpha():
+        if not re.match("^[A-Za-z ]+$", value):
             raise serializers.ValidationError(
-                "Author name must contain only letters."
+                "Author name must contain only letters and spaces."
             )
         return value
 

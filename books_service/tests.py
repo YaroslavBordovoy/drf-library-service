@@ -72,3 +72,46 @@ class BookSerializerTest(APITestCase):
         serializer = BookDetailSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertEqual(serializer.validated_data, data)
+
+    def test_author_with_valid_name(self):
+        data = {
+            "title": "Test Book",
+            "author": "Steven King",
+            "cover": "SOFT",
+            "inventory": 10,
+            "daily_fee": 5.00,
+        }
+        serializer = BookDetailSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_author_with_invalid_characters(self):
+        data = {
+            "title": "Test Book",
+            "author": "Steven123 King",
+            "cover": "SOFT",
+            "inventory": 10,
+            "daily_fee": 5.00,
+        }
+        serializer = BookDetailSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("author", serializer.errors)
+        self.assertEqual(
+            serializer.errors["author"][0],
+            "Author name must contain only letters and spaces."
+        )
+
+    def test_author_with_special_characters(self):
+        data = {
+            "title": "Test Book",
+            "author": "Steven! King",
+            "cover": "SOFT",
+            "inventory": 10,
+            "daily_fee": 5.00,
+        }
+        serializer = BookDetailSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("author", serializer.errors)
+        self.assertEqual(
+            serializer.errors["author"][0],
+            "Author name must contain only letters and spaces."
+        )
