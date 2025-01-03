@@ -6,6 +6,8 @@ from rest_framework import serializers
 from accounts.serializers import UserSerializer
 from books_service.serializers import BookDetailSerializer
 from borrowing_service.models import Borrowing
+from payments_service.models import Payment
+from payments_service.serializers import PaymentSerializer
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
@@ -45,6 +47,8 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
+    payments = PaymentSerializer(many=True, read_only=True)
+
     def validate(self, attrs):
         data = super().validate(attrs=attrs)
         Borrowing.validate_borrowing(
@@ -54,7 +58,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ("id", "book", "expected_return_date")
+        fields = ("id", "book", "payments", "expected_return_date")
 
     def create(self, validated_data):
         print(validated_data)
@@ -67,7 +71,8 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             book.inventory -= 1
             book.save()
             borrowing = Borrowing.objects.create(**validated_data)
-            return borrowing
+        Payment.objects.create(borrowing=borrowing)
+        return borrowing
 
 
 class BorrowingReturnSerializer(serializers.ModelSerializer):
