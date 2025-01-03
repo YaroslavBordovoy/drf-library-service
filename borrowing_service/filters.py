@@ -4,7 +4,7 @@ from borrowing_service.models import Borrowing
 
 
 class BorrowingFilter(rest_framework.FilterSet):
-    is_active = rest_framework.BooleanFilter(method="filter_is_active")
+    is_active = rest_framework.BooleanFilter(method="filter_is_active", label="Returned")
     user_id = rest_framework.NumberFilter(field_name="user__id")
 
     class Meta:

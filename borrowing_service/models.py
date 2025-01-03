@@ -1,3 +1,5 @@
+import datetime
+
 from django.conf import settings
 from django.db import models
 from django.db.models import CASCADE
@@ -24,7 +26,7 @@ class Borrowing(models.Model):
 
     def clean(self):
         Borrowing.validate_borrowing(
-            self.borrow_date, self.expected_return_date
+            datetime.date.today(), self.expected_return_date
         )
 
     def save(self, *args, **kwargs):
