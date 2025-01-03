@@ -1,18 +1,19 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from django.db import transaction
 from rest_framework import serializers
 
+from accounts.serializers import UserSerializer
 from books_service.serializers import BookDetailSerializer
 from borrowing_service.models import Borrowing
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
     book = serializers.CharField(
-        source="books_service.book.title", read_only=True
+        source="book.title", read_only=True
     )
     user = serializers.CharField(
-        source="accounts.user.email", read_only=True
+        source="user.email", read_only=True
     )
 
     class Meta:
@@ -29,12 +30,14 @@ class BorrowingListSerializer(serializers.ModelSerializer):
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
     book = BookDetailSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Borrowing
         fields = (
             "id",
             "book",
+            "user",
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
@@ -45,7 +48,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         data = super().validate(attrs=attrs)
         Borrowing.validate_borrowing(
-            attrs["borrow_date"], attrs["expected_return_date"]
+            date.today(), attrs["expected_return_date"]
         )
         return data
 
@@ -54,11 +57,12 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "book", "expected_return_date")
 
     def create(self, validated_data):
+        print(validated_data)
         with transaction.atomic():
             book = validated_data.get("book")
             if book.inventory == 0:
                 raise serializers.ValidationError(
-                    {"book": "This book is out of stock now"}
+                    {f"{book.title}": "This book is out of stock now"}
                 )
             book.inventory -= 1
             book.save()
