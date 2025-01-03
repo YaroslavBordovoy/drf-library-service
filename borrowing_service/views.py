@@ -3,8 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django_filters import rest_framework as filters
-from drf_spectacular.utils import extend_schema
-from drf_spectacular.types import OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from borrowing_service.filters import BorrowingFilter
 from borrowing_service.serializers import (
