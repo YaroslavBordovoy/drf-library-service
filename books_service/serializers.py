@@ -7,11 +7,25 @@ class BookListSerializer(serializers.ModelSerializer):
         model = Book
         fields = ("id", "title", "author")
 
+    def validate_author(self, value):
+        if not all(part.isalpha() for part in value.split()):
+            raise serializers.ValidationError(
+                "Author name must contain only letters and spaces."
+            )
+        return value
+
 
 class BookDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ("id", "title", "author", "cover", "inventory", "daily_fee")
+
+    def validate_author(self, value):
+        if not all(part.isalpha() for part in value.split()):
+            raise serializers.ValidationError(
+                "Author name must contain only letters and spaces."
+            )
+        return value
 
     def validate_inventory(self, value):
         if value < 0:
