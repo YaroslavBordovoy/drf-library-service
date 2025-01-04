@@ -97,7 +97,7 @@ class BookSerializerTest(APITestCase):
         self.assertIn("author", serializer.errors)
         self.assertEqual(
             serializer.errors["author"][0],
-            "Author name must contain only letters and spaces."
+            "Author name must contain only letters and spaces.",
         )
 
     def test_author_with_special_characters(self):
@@ -113,5 +113,5 @@ class BookSerializerTest(APITestCase):
         self.assertIn("author", serializer.errors)
         self.assertEqual(
             serializer.errors["author"][0],
-            "Author name must contain only letters and spaces."
+            "Author name must contain only letters and spaces.",
         )

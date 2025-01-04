@@ -6,5 +6,4 @@ urlpatterns = [
     # path('payments/<int:pk>/cancel/', PaymentCancelView.as_view(), name='payment-cancel'),
     # path('payments/<int:pk>/start/', StartPaymentView.as_view(), name='payment-start'),
     # path('payments/test/', create_checkout_session, name='test'),
-
 ]
