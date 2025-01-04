@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",
+    "django_celery_beat",
     # project application
     "borrowing_service",
     "accounts",
@@ -124,6 +125,13 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API for managing books borrowing",
     "VERSION": "1.0.0",
 }
+
+CELERY_BROKER_URL = os.getenv("CELERY_REDIS_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_REDIS_URL")
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
