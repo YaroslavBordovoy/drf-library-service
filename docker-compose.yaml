@@ -19,6 +19,24 @@ services:
       db:
         condition: service_healthy
     restart: always
+
+  telegram_bot:
+    build:
+      context: .
+    command: python telegram_bot/main.py
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=core.settings
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - redis
+      - library
+    volumes:
+      - .:/app
+    networks:
+      - default
+
   db:
     image: postgres:16.0-alpine
     restart: always
@@ -47,35 +65,35 @@ services:
       timeout: 5s
       retries: 5
 
-  celery:
-    build:
-      context: .
-    command: celery -A core worker --loglevel=info
-    volumes:
-      - ./:/app
-    env_file:
-      - .env
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    restart: always
-
-  celery-beat:
-    build:
-      context: .
-    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - ./:/app
-    env_file:
-      - .env
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    restart: always
+#  celery:
+#    build:
+#      context: .
+#    command: celery -A core worker --loglevel=info
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - .env
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#      db:
+#        condition: service_healthy
+#    restart: always
+#
+#  celery-beat:
+#    build:
+#      context: .
+#    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - .env
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#      db:
+#        condition: service_healthy
+#    restart: always
 
 volumes:
   db-data:
