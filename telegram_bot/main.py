@@ -39,12 +39,11 @@ def main(message):
     telegram_id = message.chat.id
 
     if is_authenticated(telegram_id):
-        bot.send_message(telegram_id, "You are already logged in! Welcome!")
+        bot.send_message(telegram_id, "✅ You are already logged in!")
         show_menu(telegram_id)
     else:
-        if not get_jwt_token(telegram_id):
-            bot.send_message(telegram_id, "Hello! Please log in. Enter your email:")
-            bot.register_next_step_handler(message, process_email)
+        bot.send_message(telegram_id, "👋 Welcome! Please log in. Enter your email:")
+        bot.register_next_step_handler(message, process_email)
 
 
 def process_email(message):
@@ -179,9 +178,9 @@ def handle_my_books(call):
 @bot.callback_query_handler(func=lambda call: call.data.startswith('book_'))
 def handle_booking(call):
     """
-    Начало бронирования книги.
+    Book Reservations Beginning
     """
-    book_id = int(call.data.split('_')[1])  # Извлекаем ID книги из callback data
+    book_id = int(call.data.split('_')[1])
     msg = bot.send_message(call.message.chat.id, "Please enter the book return date (YYYY-MM-DD):")
     bot.register_next_step_handler(msg, process_booking_date, book_id)
 
@@ -203,7 +202,12 @@ def book_a_book(telegram_id, book_id, expected_return_date):
     print("Request Headers:", headers)
     print("Request Data:", data)
 
-    response = requests.post(f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers)
+    try:
+        response = requests.post(f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        bot.send_message(telegram_id, f"Error during booking: {e}")
+        return None
 
     print("Response Status Code:", response.status_code)
     print("Response Body:", response.text)
@@ -222,9 +226,9 @@ def process_booking_date(message, book_id):
         response = book_a_book(telegram_id, book_id, expected_return_date)
 
         if response.status_code == "201":
-            bot.send_message(telegram_id, response)
+            bot.send_message(telegram_id, "Booking successful!")
         else:
-            bot.send_message(telegram_id, response)
+            bot.send_message(telegram_id, f"Booking failed: {response.text}")
     except Exception as e:
         bot.send_message(message.chat.id, f"Booking Error: {e}")
 
