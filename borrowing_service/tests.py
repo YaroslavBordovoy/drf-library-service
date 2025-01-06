@@ -6,10 +6,8 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
-from yaml import serialize
 
 from books_service.models import Book
-from books_service.serializers import BookDetailSerializer
 from borrowing_service.models import Borrowing
 from borrowing_service.serializers import BorrowingListSerializer, BorrowingDetailSerializer
 
@@ -17,70 +15,70 @@ from borrowing_service.serializers import BorrowingListSerializer, BorrowingDeta
 BORROWING_URL = reverse("borrowing:borrowing-list")
 
 
-# class BorrowingModelTests(TestCase):
-#     def setUp(self):
-#         self.book = Book.objects.create(
-#             title="test_book",
-#             author="test_author",
-#             inventory=10,
-#             daily_fee=0.5
-#         )
-#         self.user = get_user_model().objects.create_user(
-#             email="test@test.com",
-#             first_name="test_first_name",
-#             last_name="test_last_name",
-#             password="testpassword"
-#         )
-#
-#     def test_borrowing_str_(self):
-#         borrowing = Borrowing.objects.create(
-#             book=self.book,
-#             user=self.user,
-#             expected_return_date="2025-02-10"
-#         )
-#
-#         self.assertEqual(
-#             str(borrowing),
-#             f"{self.book.title} "
-#             f"borrowed {borrowing.borrow_date} and "
-#             f"expected to return {borrowing.expected_return_date}"
-#         )
-#
-#         borrowing.actual_return_date = "2025-01-10"
-#
-#         self.assertEqual(
-#             str(borrowing),
-#             f"{self.book.title} "
-#             f"borrowed {borrowing.borrow_date} and "
-#             f"returned {borrowing.actual_return_date}"
-#         )
-#
-#     def test_validate_borrowing(self):
-#         borrowing = Borrowing.objects.create(
-#             book=self.book,
-#             user=self.user,
-#             borrow_date="2025-01-05",
-#             expected_return_date="2025-01-10"
-#         )
-#
-#         self.assertIsNotNone(borrowing.id)
-#
-#         with self.assertRaises(ValidationError):
-#             borrowing = Borrowing.objects.create(
-#                 book=self.book,
-#                 user=self.user,
-#                 borrow_date="2025-01-05",
-#                 expected_return_date="2025-01-01"
-#             )
+class BorrowingModelTests(TestCase):
+    def setUp(self):
+        self.book = Book.objects.create(
+            title="test_book",
+            author="test_author",
+            inventory=10,
+            daily_fee=0.5
+        )
+        self.user = get_user_model().objects.create_user(
+            email="test@test.com",
+            first_name="test_first_name",
+            last_name="test_last_name",
+            password="testpassword"
+        )
 
-# class UnauthenticatedBorrowingApiTests(TestCase):
-#     def setUp(self):
-#         self.client = APIClient()
-#
-#     def test_auth_required(self):
-#         response = self.client.get(BORROWING_URL)
-#
-#         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_borrowing_str_(self):
+        borrowing = Borrowing.objects.create(
+            book=self.book,
+            user=self.user,
+            expected_return_date="2025-02-10"
+        )
+
+        self.assertEqual(
+            str(borrowing),
+            f"{self.book.title} "
+            f"borrowed {borrowing.borrow_date} and "
+            f"expected to return {borrowing.expected_return_date}"
+        )
+
+        borrowing.actual_return_date = "2025-01-10"
+
+        self.assertEqual(
+            str(borrowing),
+            f"{self.book.title} "
+            f"borrowed {borrowing.borrow_date} and "
+            f"returned {borrowing.actual_return_date}"
+        )
+
+    def test_validate_borrowing(self):
+        borrowing = Borrowing.objects.create(
+            book=self.book,
+            user=self.user,
+            borrow_date="2025-01-05",
+            expected_return_date="2025-01-10"
+        )
+
+        self.assertIsNotNone(borrowing.id)
+
+        with self.assertRaises(ValidationError):
+            borrowing = Borrowing.objects.create(
+                book=self.book,
+                user=self.user,
+                borrow_date="2025-01-05",
+                expected_return_date="2025-01-01"
+            )
+
+class UnauthenticatedBorrowingApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_auth_required(self):
+        response = self.client.get(BORROWING_URL)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class AuthenticatedBorrowingApiTests(TestCase):
