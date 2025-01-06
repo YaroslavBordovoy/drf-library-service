@@ -194,11 +194,11 @@ def book_a_book(telegram_id, book_id, expected_return_date):
 
     # ERROR
     data = {
-        "book": {
-            "id": book_id
-        },
+        "book": str(book_id),
         "expected_return_date": expected_return_date
     }
+
+    # book_id = book_id
 
     print("Request Headers:", headers)
     print("Request Data:", data)
@@ -219,12 +219,12 @@ def process_booking_date(message, book_id):
         expected_return_date = message.text.strip()
         telegram_id = message.chat.id
 
-        success, result = book_a_book(telegram_id, book_id, expected_return_date)
+        response = book_a_book(telegram_id, book_id, expected_return_date)
 
-        if success:
-            bot.send_message(telegram_id, result)
+        if response.status_code == "201":
+            bot.send_message(telegram_id, response)
         else:
-            bot.send_message(telegram_id, result)
+            bot.send_message(telegram_id, response)
     except Exception as e:
         bot.send_message(message.chat.id, f"Booking Error: {e}")
 
