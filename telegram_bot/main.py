@@ -1,12 +1,21 @@
+import asyncio
 import os
 import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
+
+from rest_framework.generics import get_object_or_404
 from telebot import TeleBot, types
+
+from books_service.models import Book
+from notifications_service.notifications import notify_booking_created, notify_payment_needed
 from telegram_bot.redis_client import save_telegram_id, get_telegram_id, save_jwt_token, get_jwt_token
 import requests
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-django.setup()
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+# django.setup()
 
 bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
 
@@ -222,7 +231,28 @@ def process_booking_date(message, book_id):
         response = book_a_book(telegram_id, book_id, expected_return_date)
 
         if response.status_code == "201":
-            bot.send_message(telegram_id, response)
+            book = get_object_or_404(Book, pk=book_id)
+
+            # asyncio.run(notify_booking_created(
+            #     telegram_id=telegram_id,
+            #     book_title=book.title,
+            #     borrow_date=book.borrowings.borrow_date,
+            #     expected_return_date=book.borrowings.expected_return_date,
+            # ))
+
+            # asyncio.run(
+            #     notify_payment_needed(
+            #     telegram_id=telegram_id,
+            #     book_title=book.title,
+            #     payment_url=response.data["payments"]["session_url"],
+            # ))
+            message = (
+                f"💳 Pay for the book reservation: {book.title}.\n"
+                f"To pay, follow the link: {response.data["payments"]["session_url"]}\n"
+                "Thank you for using our library!"
+            )
+
+            bot.send_message(telegram_id, message)
         else:
             bot.send_message(telegram_id, response)
     except Exception as e:
