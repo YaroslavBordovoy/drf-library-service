@@ -11,6 +11,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from books_service.permissions import IsAdminOrReadOnly
 from borrowing_service.filters import BorrowingFilter
+from borrowing_service.paginations import BorrowingPagination
 from borrowing_service.serializers import (
     BorrowingDetailSerializer,
     BorrowingListSerializer,
@@ -30,6 +31,7 @@ class BorrowingViewSet(
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = BorrowingFilter
     permission_classes = (IsAuthenticated,)
+    pagination_class = BorrowingPagination
 
     @extend_schema(
         parameters=[
@@ -51,8 +53,8 @@ class BorrowingViewSet(
         borrowing = self.get_object()
         if borrowing.actual_return_date:
             raise ValidationError(
-                    {f"{borrowing.book.title}": "This book is already returned"}
-                )
+                {f"{borrowing.book.title}": "This book is already returned"}
+            )
         borrowing.book.inventory += 1
         borrowing.book.save()
         borrowing.actual_return_date = date.today()

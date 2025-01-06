@@ -11,12 +11,8 @@ from payments_service.serializers import PaymentSerializer
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
-    book = serializers.CharField(
-        source="book.title", read_only=True
-    )
-    user = serializers.CharField(
-        source="user.email", read_only=True
-    )
+    book = serializers.CharField(source="book.title", read_only=True)
+    user = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = Borrowing
