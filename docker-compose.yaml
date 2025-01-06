@@ -64,35 +64,35 @@ services:
       timeout: 5s
       retries: 5
 
-  celery:
-    build:
-      context: .
-    command: celery -A core worker --loglevel=info
-    volumes:
-      - ./:/app
-    env_file:
-      - .env
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    restart: always
-
-  celery-beat:
-    build:
-      context: .
-    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - ./:/app
-    env_file:
-      - .env
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    restart: always
+#  celery:
+#    build:
+#      context: .
+#    command: celery -A core worker --loglevel=info
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - .env
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#      db:
+#        condition: service_healthy
+#    restart: always
+#
+#  celery-beat:
+#    build:
+#      context: .
+#    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - .env
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#      db:
+#        condition: service_healthy
+#    restart: always
 
 volumes:
   db-data:
