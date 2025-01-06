@@ -71,6 +71,9 @@ class BorrowingModelTests(TestCase):
                 expected_return_date="2025-01-01"
             )
 
+    def tearDown(self):
+        get_user_model().objects.all().delete()
+
 class UnauthenticatedBorrowingApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -122,10 +125,10 @@ class AuthenticatedBorrowingApiTests(TestCase):
     def test_get_borrowing_list(self):
         response = self.client.get(BORROWING_URL)
 
-        borrowings = Borrowing.objects.all()
+        borrowings = Borrowing.objects.all().order_by("id")
         serializer = BorrowingListSerializer(borrowings, many=True)
 
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data["results"], serializer.data)
         self.assertEqual(Borrowing.objects.count(), 2)
 
     def test_get_borrowing_detail(self):
@@ -156,7 +159,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         self.book_1.refresh_from_db()
 
         self.assertEqual(self.book_1.inventory, initial_inventory - 1)
-
+    #
     def test_return_book_success(self):
         return_url = reverse(
             "borrowing:borrowing-return",
@@ -181,11 +184,11 @@ class AuthenticatedBorrowingApiTests(TestCase):
         response = self.client.get(BORROWING_URL, {"is_active": True})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["id"], self.borrowing_1.id)
+        self.assertEqual(len(response.data["results"]), 2)
+        self.assertEqual(response.data["results"][0]["id"], self.borrowing_1.id)
 
     def test_filter_user_id(self):
         response = self.client.get(BORROWING_URL, {"user_id": self.user.id})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data["results"]), 2)

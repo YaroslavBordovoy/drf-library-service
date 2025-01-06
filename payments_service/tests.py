@@ -36,7 +36,7 @@ class PaymentModelTests(TestCase):
 
         payment = Payment.objects.create(
             borrowing=self.borrowing,
-            money_to_pay=22.5,
+            money_to_pay=21.0,
         )
 
         self.assertEqual(payment.session_id, "session_id_example")
@@ -46,7 +46,7 @@ class PaymentModelTests(TestCase):
         )
 
         mock_get_stripe_data.assert_called_once_with(
-            money_to_pay=22.5,
+            money_to_pay=21.0,
             title="Test_Book",
             borrowing_id=self.borrowing.id,
         )
