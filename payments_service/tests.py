@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from books_service.models import Book
 from borrowing_service.models import Borrowing
-from payments_service.models import Payment, calculate_sum
+from payments_service.models import Payment
 
 
 class PaymentModelTests(TestCase):
