@@ -6,6 +6,7 @@ redis_client = redis.StrictRedis.from_url(
     os.getenv("REDIS_URL", "redis://localhost:6379/1")
 )
 
+
 def save_telegram_id(email, telegram_id):
     redis_client.set(f"telegram_id:{email}", telegram_id)
 
