@@ -1,10 +1,11 @@
 from rest_framework import generics
 from .models import Book
+from .paginations import BooksPagination
 from .serializers import BookListSerializer, BookDetailSerializer
 from .permissions import IsAdminOrReadOnly
 
 
-class BaseBookPermissionView():
+class BaseBookPermissionView:
     # permission_classes = IsAdminOrReadOnly
     pass
 
@@ -17,6 +18,7 @@ class BookCreateView(generics.CreateAPIView, BaseBookPermissionView):
 class BookListView(generics.ListAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookListSerializer
+    pagination_class = BooksPagination
 
 
 class BookDetailView(generics.RetrieveAPIView, BaseBookPermissionView):
