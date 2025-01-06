@@ -6,11 +6,12 @@ redis_client = redis.StrictRedis.from_url(
     os.getenv("REDIS_URL", "redis://localhost:6379/1")
 )
 
-def save_telegram_id(user_id, telegram_id):
-    redis_client.set(f"telegram_id:{user_id}", telegram_id)
 
-def get_telegram_id(user_id):
-    telegram_id = redis_client.get(f"telegram_id:{user_id}")
+def save_telegram_id(email, telegram_id):
+    redis_client.set(f"telegram_id:{email}", telegram_id)
+
+def get_telegram_id(email):
+    telegram_id = redis_client.get(f"telegram_id:{email}")
 
     return telegram_id.decode("utf-8") if telegram_id else None
 
