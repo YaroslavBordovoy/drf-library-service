@@ -1,4 +1,3 @@
-import asyncio
 import os
 import django
 
@@ -9,13 +8,9 @@ from rest_framework.generics import get_object_or_404
 from telebot import TeleBot, types
 
 from books_service.models import Book
-from notifications_service.notifications import notify_booking_created, notify_payment_needed
 from telegram_bot.redis_client import save_telegram_id, get_telegram_id, save_jwt_token, get_jwt_token
 import requests
 
-
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-# django.setup()
 
 bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
 
@@ -48,12 +43,11 @@ def main(message):
     telegram_id = message.chat.id
 
     if is_authenticated(telegram_id):
-        bot.send_message(telegram_id, "You are already logged in! Welcome!")
+        bot.send_message(telegram_id, "✅ You are already logged in!")
         show_menu(telegram_id)
     else:
-        if not get_jwt_token(telegram_id):
-            bot.send_message(telegram_id, "Hello! Please log in. Enter your email:")
-            bot.register_next_step_handler(message, process_email)
+        bot.send_message(telegram_id, "👋 Welcome! Please log in. Enter your email:")
+        bot.register_next_step_handler(message, process_email)
 
 
 def process_email(message):
@@ -188,9 +182,9 @@ def handle_my_books(call):
 @bot.callback_query_handler(func=lambda call: call.data.startswith('book_'))
 def handle_booking(call):
     """
-    Начало бронирования книги.
+    Book Reservations Beginning
     """
-    book_id = int(call.data.split('_')[1])  # Извлекаем ID книги из callback data
+    book_id = int(call.data.split('_')[1])
     msg = bot.send_message(call.message.chat.id, "Please enter the book return date (YYYY-MM-DD):")
     bot.register_next_step_handler(msg, process_booking_date, book_id)
 
@@ -212,7 +206,12 @@ def book_a_book(telegram_id, book_id, expected_return_date):
     print("Request Headers:", headers)
     print("Request Data:", data)
 
-    response = requests.post(f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers)
+    try:
+        response = requests.post(f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        bot.send_message(telegram_id, f"Error during booking: {e}")
+        return None
 
     print("Response Status Code:", response.status_code)
     print("Response Body:", response.text)
@@ -230,31 +229,20 @@ def process_booking_date(message, book_id):
 
         response = book_a_book(telegram_id, book_id, expected_return_date)
 
-        if response.status_code == "201":
+        if response.status_code == 201:
             book = get_object_or_404(Book, pk=book_id)
 
-            # asyncio.run(notify_booking_created(
-            #     telegram_id=telegram_id,
-            #     book_title=book.title,
-            #     borrow_date=book.borrowings.borrow_date,
-            #     expected_return_date=book.borrowings.expected_return_date,
-            # ))
-
-            # asyncio.run(
-            #     notify_payment_needed(
-            #     telegram_id=telegram_id,
-            #     book_title=book.title,
-            #     payment_url=response.data["payments"]["session_url"],
-            # ))
             message = (
                 f"💳 Pay for the book reservation: {book.title}.\n"
-                f"To pay, follow the link: {response.data["payments"]["session_url"]}\n"
+                f"To pay, follow the link: {response.json()['payments'][0]['session_url']}\n"
                 "Thank you for using our library!"
             )
 
+            bot.send_message(telegram_id, "Booking successful!")
             bot.send_message(telegram_id, message)
+
         else:
-            bot.send_message(telegram_id, response)
+            bot.send_message(telegram_id, f"Booking failed: {response.text}")
     except Exception as e:
         bot.send_message(message.chat.id, f"Booking Error: {e}")
 

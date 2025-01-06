@@ -37,8 +37,8 @@ def get_stripe_data(money_to_pay, title, borrowing_id):
             "quantity": 1,
         }],
         mode="payment",
-        success_url=f"http://127.0.0.1:8000/borrowing/{borrowing_id}/success/",
-        cancel_url=f"http://127.0.0.1:8000/borrowing/{borrowing_id}/cancel/",
+        success_url=f"http://127.0.0.1:8000/api/payments/payment/{borrowing_id}/success/",
+        cancel_url=f"http://127.0.0.1:8000/api/payments/payment/{borrowing_id}/cancel/",
     )
     return session.id, session.url
 
