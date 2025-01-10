@@ -1,4 +1,13 @@
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 SECRET_KEY = "test-secret-key"
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
