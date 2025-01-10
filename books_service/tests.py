@@ -1,9 +1,9 @@
 from django.test import TestCase
-from .models import Book, Cover
+from books_service.models import Book, Cover
 from django.core.exceptions import ValidationError
 
 from rest_framework.test import APITestCase
-from .serializers import BookDetailSerializer
+from books_service.serializers import BookDetailSerializer
 
 
 class BookModelTest(TestCase):

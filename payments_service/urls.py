@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import payment_success
+from payments_service.views import payment_success
 
 
 app_name = "payment"
