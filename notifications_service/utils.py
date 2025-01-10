@@ -3,6 +3,7 @@ import os
 
 application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
+
 async def send_telegram_message(telegram_id, message):
     """
     Sends a message to the user via Telegram.

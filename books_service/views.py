@@ -2,7 +2,7 @@ from rest_framework import generics
 from books_service.models import Book
 from books_service.paginations import BooksPagination
 from books_service.serializers import BookListSerializer, BookDetailSerializer
-from books_service.permissions import IsAdminOrReadOnly
+# from books_service.permissions import IsAdminOrReadOnly
 
 
 class BaseBookPermissionView:

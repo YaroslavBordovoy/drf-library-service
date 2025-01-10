@@ -27,10 +27,9 @@ api = [
     path("users/", include("accounts.urls", namespace="user")),
     path("books/", include("books_service.urls", namespace="book")),
     path(
-        "borrowings/",
-        include("borrowing_service.urls", namespace="borrowing")
+        "borrowings/", include("borrowing_service.urls", namespace="borrowing")
     ),
-    path("payments/", include("payments_service.urls", namespace="payment"))
+    path("payments/", include("payments_service.urls", namespace="payment")),
 ]
 
 urlpatterns = [

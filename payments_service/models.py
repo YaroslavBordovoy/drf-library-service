@@ -4,8 +4,6 @@ import stripe
 from django.conf import settings
 from django.db import models
 
-from borrowing_service.models import Borrowing
-
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 

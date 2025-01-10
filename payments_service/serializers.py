@@ -10,14 +10,16 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = ("session_url", "session_id")
 
+
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'inventory', 'daily_fee']
+        fields = ["title", "author", "inventory", "daily_fee"]
+
 
 class BorrowingSuccessSerializer(serializers.ModelSerializer):
     book = BookSerializer()
 
     class Meta:
         model = Borrowing
-        fields = ['book', 'expected_return_date', 'borrow_date']
+        fields = ["book", "expected_return_date", "borrow_date"]

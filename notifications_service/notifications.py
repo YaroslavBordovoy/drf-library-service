@@ -2,7 +2,9 @@ from notifications_service.utils import send_telegram_message
 from telegram_bot.redis_client import get_telegram_id
 
 
-async def notify_booking_created(user_id, book_title, borrow_date, expected_return_date):
+async def notify_booking_created(
+    user_id, book_title, borrow_date, expected_return_date
+):
     """
     Notification of successful booking
     """

@@ -13,7 +13,7 @@ from borrowing_service.models import Borrowing
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def payment_success(request, borrowing_id):
     borrowing = get_object_or_404(Borrowing, id=borrowing_id)
     book = borrowing.book
@@ -23,7 +23,12 @@ def payment_success(request, borrowing_id):
 
     if not telegram_id:
         print(f"Unable to find telegram_id for user with email {email}")
-        return JsonResponse({"status": "error", "message": "Unable to find Telegram ID of user."})
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Unable to find Telegram ID of user.",
+            }
+        )
 
     message = (
         f"📚 You have successfully booked the book: {book.title}\n"
@@ -34,4 +39,6 @@ def payment_success(request, borrowing_id):
 
     send_notification(telegram_id, message)
 
-    return JsonResponse({"status": "success", "message": "Booking successfully completed!"})
+    return JsonResponse(
+        {"status": "success", "message": "Booking successfully completed!"}
+    )

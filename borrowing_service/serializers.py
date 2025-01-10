@@ -6,7 +6,10 @@ from rest_framework import serializers
 from accounts.serializers import UserSerializer
 from books_service.serializers import BookDetailSerializer
 from borrowing_service.models import Borrowing
-from notifications_service.notifications import notify_booking_created, notify_payment_needed
+from notifications_service.notifications import (
+    notify_booking_created,
+    notify_payment_needed,
+)
 from payments_service.models import Payment
 from payments_service.serializers import PaymentSerializer
 
@@ -74,15 +77,14 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
                 user_id=borrowing.user.id,
                 book_title=borrowing.book.title,
                 borrow_date=borrowing.borrow_date,
-                expected_return_date=borrowing.expected_return_date
+                expected_return_date=borrowing.expected_return_date,
             )
             if payment.session_url:
                 notify_payment_needed(
                     user_id=borrowing.user.id,
                     book_title=borrowing.book.title,
-                    payment_url=payment.session_url
+                    payment_url=payment.session_url,
                 )
-
 
         return borrowing
 
