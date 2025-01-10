@@ -19,6 +19,15 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set environment variables
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+
       - name: Cache pip dependencies
         uses: actions/cache@v2
         with:
@@ -26,9 +35,6 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-
-      - name: Set DJANGO_SETTINGS_MODULE
-        run: echo "DJANGO_SETTINGS_MODULE=core.test_settings" >> $GITHUB_ENV
 
       - name: Install requirements
         run: |
@@ -40,4 +46,4 @@ jobs:
 
       - name: Run tests
         timeout-minutes: 5
-        run: python manage.py test --settings=core.test_settings
+        run: python manage.py test
