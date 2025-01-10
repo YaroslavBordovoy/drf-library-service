@@ -125,7 +125,7 @@ class AccountsTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response2 = self.client.get(
-            MANAGE_URL, HTTP_AUTHORIZATION=f"Bearer {response.data["access"]}"
+            MANAGE_URL, HTTP_AUTHORIZATION=f"Bearer {response.data['access']}"
         )
 
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
