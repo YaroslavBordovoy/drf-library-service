@@ -91,24 +91,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-if os.environ.get("GITHUB_ACTIONS"):  # Проверяем, что код работает в GitHub Actions
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("POSTGRES_DB"),
-            "USER": os.getenv("POSTGRES_USER"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-            "HOST": os.getenv("POSTGRES_HOST"),
-            "PORT": os.getenv("POSTGRES_PORT"),
-        }
-    }
+}
 
 
 REST_FRAMEWORK = {
