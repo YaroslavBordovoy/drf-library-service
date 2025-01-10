@@ -195,19 +195,16 @@ def book_a_book(telegram_id, book_id, expected_return_date):
     jwt_token = get_jwt_token(telegram_id)
     headers = {"Authorization": f"Bearer {jwt_token}"}
 
-    # ERROR
     data = {
         "book": str(book_id),
         "expected_return_date": expected_return_date
     }
 
-    # book_id = book_id
-
     print("Request Headers:", headers)
     print("Request Data:", data)
 
     try:
-        response = requests.post(f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers)
+        response = requests.post(f"{API_BASE_URL}/borrowings/", json=data, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         bot.send_message(telegram_id, f"Error during booking: {e}")

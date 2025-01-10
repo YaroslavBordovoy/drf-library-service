@@ -11,6 +11,6 @@ async def send_telegram_message(telegram_id, message):
     """
     try:
         await application.bot.send_message(chat_id=telegram_id, text=message)
-        print(f"Сообщение отправлено пользователю {telegram_id}.")
+        print(f"Message sent to user {telegram_id}.")
     except Exception as e:
-        print(f"Ошибка отправки сообщения пользователю {telegram_id}: {e}")
+        print(f"Error sending message to user {telegram_id}: {e}")

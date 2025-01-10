@@ -159,7 +159,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         self.book_1.refresh_from_db()
 
         self.assertEqual(self.book_1.inventory, initial_inventory - 1)
-    #
+
     def test_return_book_success(self):
         return_url = reverse(
             "borrowing:borrowing-return",

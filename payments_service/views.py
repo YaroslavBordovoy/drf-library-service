@@ -9,6 +9,7 @@ from telegram_bot.main import send_notification
 from telegram_bot.redis_client import get_telegram_id
 from borrowing_service.models import Borrowing
 
+
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
