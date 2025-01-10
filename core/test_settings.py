@@ -1,10 +1,7 @@
-from core.settings import *
+from core.settings import *  #noqa
 
 
 SECRET_KEY = "test-secret-key"
-
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 DATABASES = {
     "default": {
