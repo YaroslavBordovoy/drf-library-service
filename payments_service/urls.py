@@ -5,5 +5,5 @@ from payments_service.views import payment_success
 app_name = "payment"
 
 urlpatterns = [
-    path("payment/<int:borrowing_id>/success/", payment_success, name="success-booking"),
+    path("<int:borrowing_id>/success/", payment_success, name="success-booking"),
 ]
