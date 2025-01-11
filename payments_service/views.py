@@ -22,7 +22,6 @@ def payment_success(request, borrowing_id):
     telegram_id = get_telegram_id(email)
 
     if not telegram_id:
-        print(f"Unable to find telegram_id for user with email {email}")
         return JsonResponse(
             {
                 "status": "error",

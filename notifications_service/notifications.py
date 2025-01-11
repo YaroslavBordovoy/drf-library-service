@@ -11,8 +11,7 @@ async def notify_booking_created(
     telegram_id = get_telegram_id(user_id)
 
     if not telegram_id:
-        print(f"Telegram ID for user {user_id} not found in Redis.")
-        return
+        raise ValueError(f"Telegram ID for user {user_id} not found in Redis.")
 
     message = (
         f"📚 You have successfully booked the book: {book_title}\n"
@@ -31,8 +30,7 @@ async def notify_payment_needed(user_id, book_title, payment_url):
     telegram_id = get_telegram_id(user_id)
 
     if not telegram_id:
-        print(f"Telegram ID for user {user_id} not found in Redis.")
-        return
+        raise ValueError(f"Telegram ID for user {user_id} not found in Redis.")
 
     message = (
         f"💳 Pay for the book reservation: {book_title}.\n"

@@ -4,7 +4,7 @@ import stripe
 from django.conf import settings
 from django.db import models
 
-
+STRIPE_URL = "http://127.0.0.1:8000/"
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -40,8 +40,8 @@ def get_stripe_data(money_to_pay, title, borrowing_id):
             }
         ],
         mode="payment",
-        success_url=f"http://127.0.0.1:8000/api/payments/{borrowing_id}/success/",
-        cancel_url=f"http://127.0.0.1:8000/api/payments/{borrowing_id}/cancel/",
+        success_url=f"{STRIPE_URL}api/payments/{borrowing_id}/success/",
+        cancel_url=f"{STRIPE_URL}api/payments/{borrowing_id}/cancel/",
     )
     return session.id, session.url
 

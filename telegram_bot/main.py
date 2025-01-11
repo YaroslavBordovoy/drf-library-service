@@ -216,9 +216,6 @@ def book_a_book(telegram_id, book_id, expected_return_date):
 
     data = {"book": str(book_id), "expected_return_date": expected_return_date}
 
-    print("Request Headers:", headers)
-    print("Request Data:", data)
-
     try:
         response = requests.post(
             f"{API_BASE_URL}/borrowings/", json=data, headers=headers
@@ -227,9 +224,6 @@ def book_a_book(telegram_id, book_id, expected_return_date):
     except requests.exceptions.RequestException as e:
         bot.send_message(telegram_id, f"Error during booking: {e}")
         return None
-
-    print("Response Status Code:", response.status_code)
-    print("Response Body:", response.text)
 
     return response
 
