@@ -12,7 +12,7 @@ from .models import Borrowing
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def payment_success(request, borrowing_id):
     borrowing = get_object_or_404(Borrowing, id=borrowing_id)
     book = borrowing.book

@@ -64,7 +64,7 @@ class BorrowingModelTests(TestCase):
         self.assertIsNotNone(borrowing.id)
 
         with self.assertRaises(ValidationError):
-            borrowing = Borrowing.objects.create(
+            Borrowing.objects.create(
                 book=self.book,
                 user=self.user,
                 borrow_date="2025-01-05",
@@ -159,7 +159,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         self.book_1.refresh_from_db()
 
         self.assertEqual(self.book_1.inventory, initial_inventory - 1)
-    #
+
     def test_return_book_success(self):
         return_url = reverse(
             "borrowing:borrowing-return",

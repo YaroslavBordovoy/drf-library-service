@@ -4,7 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
-from books_service.serializers import BookDetailSerializer
+from books_service.serializers import BookDetailSerializer, BookSerializer
 from borrowing_service.models import Borrowing
 from notifications_service.notifications import notify_booking_created, notify_payment_needed
 from payments_service.models import Payment
@@ -95,3 +95,11 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = ("id", "actual_return_date")
+
+
+class BorrowingSuccessSerializer(serializers.ModelSerializer):
+    book = BookSerializer()
+
+    class Meta:
+        model = Borrowing
+        fields = ["id", "book", "expected_return_date", "borrow_date"]
