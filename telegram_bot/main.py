@@ -185,9 +185,9 @@ def handle_my_books(call):
         for borrowing in borrowings:
             bot.send_message(
                 call.message.chat.id,
-                f"Book: {borrowing["book"]["title"]}\n"
-                f"Booking Date: {borrowing["borrow_date"]}\n"
-                f"Expected Return Date: {borrowing["expected_return_date"]}\n",
+                f"Book: {borrowing['book']['title']}\n"
+                f"Booking Date: {borrowing['borrow_date']}\n"
+                f"Expected Return Date: {borrowing['expected_return_date']}\n",
             )
     else:
         bot.send_message(call.message.chat.id, "You have no active bookings.")
