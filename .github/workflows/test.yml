@@ -14,18 +14,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Set up Docker
+      - name: Set Up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Set testing environment
+        run: echo "DJANGO_ENV=local" >> $GITHUB_ENV
+
+      - name: Install Docker Compose
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io
+          sudo apt-get install -y --fix-missing
           sudo apt-get install -y docker-compose
 
       - name: Set up Docker Compose
         run: docker-compose up -d
 
       - name: Run tests
-        timeout-minutes: 5
-        run: docker-compose run library sh -c "python manage.py test"
+        run: docker-compose exec library sh -c "python manage.py test"
 
       - name: Tear down Docker Compose
         if: always()
