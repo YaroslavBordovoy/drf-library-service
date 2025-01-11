@@ -4,7 +4,13 @@ import os
 
 load_dotenv()
 
-application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
+if os.getenv("DJANGO_ENV") == "local":
+    application = None
+else:
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    application = Application.builder().token(TELEGRAM_TOKEN).build()
+
+# application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
 
 async def send_telegram_message(telegram_id, message):
