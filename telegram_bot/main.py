@@ -8,7 +8,7 @@ from rest_framework.generics import get_object_or_404
 from telebot import TeleBot, types
 
 from books_service.models import Book
-from telegram_bot.redis_client import save_telegram_id, get_telegram_id, save_jwt_token, get_jwt_token
+from telegram_bot.redis_client import save_telegram_id, save_jwt_token, get_jwt_token
 import requests
 
 
