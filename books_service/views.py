@@ -13,6 +13,7 @@ class BaseBookPermissionView:
 class BookCreateView(generics.CreateAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class BookListView(generics.ListAPIView, BaseBookPermissionView):
@@ -29,8 +30,12 @@ class BookDetailView(generics.RetrieveAPIView, BaseBookPermissionView):
 class BookUpdateView(generics.UpdateAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
 
 
 class BookDeleteView(generics.DestroyAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
