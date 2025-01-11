@@ -19,6 +19,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set testing environment
+        run: echo "DJANGO_ENV=local" >> $GITHUB_ENV
+
       - name: Cache pip dependencies
         uses: actions/cache@v2
         with:
