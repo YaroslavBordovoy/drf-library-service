@@ -17,10 +17,10 @@ from telegram_bot.redis_client import (
 import requests
 
 
-if os.getenv("DJANGO_ENV") == "local":
-    bot = None
-else:
-    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+bot = None
+if TELEGRAM_TOKEN and os.getenv("DJANGO_ENV") != "local":
     bot = TeleBot(TELEGRAM_TOKEN)
 
 # bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
