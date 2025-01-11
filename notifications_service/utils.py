@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
 from telegram.ext import Application
 import os
+
+load_dotenv()
 
 application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
