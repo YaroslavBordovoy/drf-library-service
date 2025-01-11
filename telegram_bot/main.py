@@ -17,7 +17,13 @@ from telegram_bot.redis_client import (
 import requests
 
 
-bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
+if os.getenv("DJANGO_ENV") == "local":
+    bot = None
+else:
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    bot = TeleBot(TELEGRAM_TOKEN)
+
+# bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
 
 API_BASE_URL = "http://library:8000/api"
 
