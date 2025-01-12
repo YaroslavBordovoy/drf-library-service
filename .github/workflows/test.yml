@@ -40,7 +40,7 @@ jobs:
         run: docker-compose up -d
 
       - name: Run tests
-        run: docker-compose exec library sh -c "python manage.py test"
+        run: docker-compose exec -T library sh -c "python manage.py test"
 
       - name: Tear down Docker Compose
         if: always()
