@@ -4,10 +4,8 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from rest_framework.generics import get_object_or_404
 from telebot import TeleBot, types
 
-from books_service.models import Book
 from telegram_bot.redis_client import save_telegram_id, save_jwt_token, get_jwt_token
 import requests
 
@@ -69,8 +67,8 @@ def process_password(message, email):
     user_data = authenticate_user(email, password)
 
     if user_data:
-        save_telegram_id(telegram_id, email)
-        save_jwt_token(telegram_id, user_data["access"])  # Сохраняем JWT-токен
+        save_telegram_id(email, telegram_id)
+        save_jwt_token(telegram_id, user_data["access"])
         bot.send_message(telegram_id, "Authorization successful! Welcome!")
         show_menu(telegram_id)
 
@@ -210,12 +208,6 @@ def book_a_book(telegram_id, book_id, expected_return_date):
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         bot.send_message(telegram_id, f"Error during booking: {e}")
-        return None
-
-    print("Response Status Code:", response.status_code)
-    print("Response Body:", response.text)
-
-    return response
 
 
 def process_booking_date(message, book_id):
@@ -226,22 +218,8 @@ def process_booking_date(message, book_id):
         expected_return_date = message.text.strip()
         telegram_id = message.chat.id
 
-        response = book_a_book(telegram_id, book_id, expected_return_date)
+        book_a_book(telegram_id, book_id, expected_return_date)
 
-        if response.status_code == 201:
-            book = get_object_or_404(Book, pk=book_id)
-
-            message = (
-                f"💳 Pay for the book reservation: {book.title}.\n"
-                f"To pay, follow the link: {response.json()['payments'][0]['session_url']}\n"
-                "Thank you for using our library!"
-            )
-
-            bot.send_message(telegram_id, "Booking successful!")
-            bot.send_message(telegram_id, message)
-
-        else:
-            bot.send_message(telegram_id, f"Booking failed: {response.text}")
     except Exception as e:
         bot.send_message(message.chat.id, f"Booking Error: {e}")
 

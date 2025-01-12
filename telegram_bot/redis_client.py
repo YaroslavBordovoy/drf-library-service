@@ -3,7 +3,7 @@ import os
 
 
 redis_client = redis.StrictRedis.from_url(
-    os.getenv("REDIS_URL", "redis://localhost:6379/1")
+    os.getenv("REDIS_URL")
 )
 
 
