@@ -11,4 +11,3 @@ def handle_borrowing_created(sender, instance, **kwargs):
     from telegram_bot.main import send_notification
     telegram_id, message = notify_booking_created(instance)
     send_notification(telegram_id, message)
-

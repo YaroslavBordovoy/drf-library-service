@@ -6,7 +6,6 @@ from books_service.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import AllowAny
 
 
-
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
