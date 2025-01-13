@@ -65,13 +65,13 @@ class BorrowingModelTests(TestCase):
 
         self.assertIsNotNone(borrowing.id)
 
-        # with self.assertRaises(ValidationError):
-        #     borrowing = Borrowing.objects.create(
-        #         book=self.book,
-        #         user=self.user,
-        #         borrow_date="2025-01-05",
-        #         expected_return_date="2025-01-01",
-        #     )
+        with self.assertRaises(ValidationError):
+            Borrowing.objects.create(
+                book=self.book,
+                user=self.user,
+                borrow_date="2025-01-05",
+                expected_return_date="2025-01-01"
+            )
 
     def tearDown(self):
         get_user_model().objects.all().delete()

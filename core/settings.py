@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "accounts",
     "books_service",
     "payments_service",
+    "notifications_service",
     "telegram_bot",
 ]
 
