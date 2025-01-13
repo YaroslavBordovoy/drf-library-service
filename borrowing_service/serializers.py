@@ -4,9 +4,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
-from books_service.serializers import BookDetailSerializer
+from books_service.serializers import BookDetailSerializer, BookSerializer
 from borrowing_service.models import Borrowing
-from notifications_service.notifications import notify_booking_created, notify_payment_needed
 from payments_service.models import Payment
 from payments_service.serializers import PaymentSerializer
 
@@ -68,21 +67,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             book.inventory -= 1
             book.save()
             borrowing = Borrowing.objects.create(**validated_data)
-            payment = Payment.objects.create(borrowing=borrowing)
-
-            notify_booking_created(
-                user_id=borrowing.user.id,
-                book_title=borrowing.book.title,
-                borrow_date=borrowing.borrow_date,
-                expected_return_date=borrowing.expected_return_date
-            )
-            if payment.session_url:
-                notify_payment_needed(
-                    user_id=borrowing.user.id,
-                    book_title=borrowing.book.title,
-                    payment_url=payment.session_url
-                )
-
+            Payment.objects.create(borrowing=borrowing)
 
         return borrowing
 
@@ -95,3 +80,11 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = ("id", "actual_return_date")
+
+
+class BorrowingSuccessSerializer(serializers.ModelSerializer):
+    book = BookSerializer()
+
+    class Meta:
+        model = Borrowing
+        fields = ["id", "book", "expected_return_date", "borrow_date"]

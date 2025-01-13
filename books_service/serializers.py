@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import Book
 
 
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["id", "title", "author", "inventory", "daily_fee"]
+
+
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
@@ -34,7 +40,5 @@ class BookDetailSerializer(serializers.ModelSerializer):
 
     def validate_daily_fee(self, value):
         if value <= 0:
-            raise serializers.ValidationError(
-                "Daily fee must be greater than 0."
-            )
+            raise serializers.ValidationError("Daily fee must be greater than 0.")
         return value
