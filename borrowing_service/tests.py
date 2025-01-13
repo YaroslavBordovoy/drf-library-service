@@ -3,13 +3,17 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework import status
+# from django.core.exceptions import ValidationError
 from rest_framework.exceptions import ValidationError
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from books_service.models import Book
 from borrowing_service.models import Borrowing
-from borrowing_service.serializers import BorrowingListSerializer, BorrowingDetailSerializer
+from borrowing_service.serializers import (
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+)
 
 
 BORROWING_URL = reverse("borrowing:borrowing-list")
@@ -21,27 +25,25 @@ class BorrowingModelTests(TestCase):
             title="test_book",
             author="test_author",
             inventory=10,
-            daily_fee=0.5
+            daily_fee=0.5,
         )
         self.user = get_user_model().objects.create_user(
             email="test@test.com",
             first_name="test_first_name",
             last_name="test_last_name",
-            password="testpassword"
+            password="testpassword",
         )
 
     def test_borrowing_str_(self):
         borrowing = Borrowing.objects.create(
-            book=self.book,
-            user=self.user,
-            expected_return_date="2025-02-10"
+            book=self.book, user=self.user, expected_return_date="2025-02-10"
         )
 
         self.assertEqual(
             str(borrowing),
             f"{self.book.title} "
             f"borrowed {borrowing.borrow_date} and "
-            f"expected to return {borrowing.expected_return_date}"
+            f"expected to return {borrowing.expected_return_date}",
         )
 
         borrowing.actual_return_date = "2025-01-10"
@@ -50,7 +52,7 @@ class BorrowingModelTests(TestCase):
             str(borrowing),
             f"{self.book.title} "
             f"borrowed {borrowing.borrow_date} and "
-            f"returned {borrowing.actual_return_date}"
+            f"returned {borrowing.actual_return_date}",
         )
 
     def test_validate_borrowing(self):
@@ -58,7 +60,7 @@ class BorrowingModelTests(TestCase):
             book=self.book,
             user=self.user,
             borrow_date="2025-01-05",
-            expected_return_date="2025-01-10"
+            expected_return_date="2025-03-20",
         )
 
         self.assertIsNotNone(borrowing.id)
@@ -73,6 +75,7 @@ class BorrowingModelTests(TestCase):
 
     def tearDown(self):
         get_user_model().objects.all().delete()
+
 
 class UnauthenticatedBorrowingApiTests(TestCase):
     def setUp(self):
@@ -98,23 +101,19 @@ class AuthenticatedBorrowingApiTests(TestCase):
             title="test_book",
             author="test_author",
             inventory=10,
-            daily_fee=0.5
+            daily_fee=0.5,
         )
         self.book_2 = Book.objects.create(
             title="test_book_2",
             author="test_author_2",
             inventory=10,
-            daily_fee=0.5
+            daily_fee=0.5,
         )
         self.borrowing_1 = Borrowing.objects.create(
-            book=self.book_1,
-            user=self.user,
-            expected_return_date="2025-02-10"
+            book=self.book_1, user=self.user, expected_return_date="2025-02-10"
         )
         self.borrowing_2 = Borrowing.objects.create(
-            book=self.book_2,
-            user=self.user,
-            expected_return_date="2025-02-15"
+            book=self.book_2, user=self.user, expected_return_date="2025-02-15"
         )
 
     def test_auth_required(self):
@@ -133,8 +132,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
 
     def test_get_borrowing_detail(self):
         borrowing_detail_url = reverse(
-            "borrowing:borrowing-detail",
-            args=[self.borrowing_1.id]
+            "borrowing:borrowing-detail", args=[self.borrowing_1.id]
         )
         response = self.client.get(borrowing_detail_url)
 
@@ -147,7 +145,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         data = {
             "book": self.book_1.id,
             "user": self.user.id,
-            "expected_return_date": "2025-03-01"
+            "expected_return_date": "2025-03-01",
         }
         initial_inventory = self.book_1.inventory
         response = self.client.post(BORROWING_URL, data)
@@ -162,8 +160,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
 
     def test_return_book_success(self):
         return_url = reverse(
-            "borrowing:borrowing-return",
-            args=[self.borrowing_1.id]
+            "borrowing:borrowing-return", args=[self.borrowing_1.id]
         )
         initial_inventory = self.book_1.inventory
         response = self.client.post(return_url)
@@ -185,7 +182,9 @@ class AuthenticatedBorrowingApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
-        self.assertEqual(response.data["results"][0]["id"], self.borrowing_1.id)
+        self.assertEqual(
+            response.data["results"][0]["id"], self.borrowing_1.id
+        )
 
     def test_filter_user_id(self):
         response = self.client.get(BORROWING_URL, {"user_id": self.user.id})

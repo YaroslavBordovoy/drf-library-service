@@ -3,6 +3,7 @@ from payments_service.models import Payment
 from telegram_bot.redis_client import get_telegram_id
 
 
+
 def notify_booking_created(instance: Borrowing):
     """
     Notification of successful booking
@@ -10,8 +11,9 @@ def notify_booking_created(instance: Borrowing):
     telegram_id = get_telegram_id(instance.user.email)
 
     if not telegram_id:
-        print(f"Telegram ID for user {instance.user.email} not found in Redis.")
+        raise ValueError(f"Telegram ID for user {instance.user.email} not found in Redis.")
         return
+
 
     message = (
         f"📚 You have successfully booked the book: {instance.book.title}\n"
@@ -31,7 +33,7 @@ def notify_payment_needed(instance: Payment):
     telegram_id = get_telegram_id(instance.borrowing.user.email)
 
     if not telegram_id:
-        print(f"Telegram ID for user {instance.borrowing.user.email} not found in Redis.")
+        raise ValueError(f"Telegram ID for user {instance.borrowing.user.email} not found in Redis.")
         return
 
     message = (

@@ -1,7 +1,17 @@
+from dotenv import load_dotenv
 from telegram.ext import Application
 import os
 
-application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
+load_dotenv()
+
+if os.getenv("DJANGO_ENV") == "local":
+    application = None
+else:
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    application = Application.builder().token(TELEGRAM_TOKEN).build()
+
+# application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
+
 
 async def send_telegram_message(telegram_id, message):
     """
@@ -11,6 +21,5 @@ async def send_telegram_message(telegram_id, message):
     """
     try:
         await application.bot.send_message(chat_id=telegram_id, text=message)
-        print(f"Сообщение отправлено пользователю {telegram_id}.")
     except Exception as e:
-        print(f"Ошибка отправки сообщения пользователю {telegram_id}: {e}")
+        raise RuntimeError (f"Error sending message to user {telegram_id}: {e}")

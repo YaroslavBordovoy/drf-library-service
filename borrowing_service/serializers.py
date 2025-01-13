@@ -57,7 +57,6 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "book", "payments", "expected_return_date")
 
     def create(self, validated_data):
-        print(validated_data)
         with transaction.atomic():
             book = validated_data.get("book")
             if book.inventory == 0:

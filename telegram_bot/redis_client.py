@@ -26,7 +26,13 @@ def save_jwt_token(telegram_id, jwt_token):
     redis_client.set(key, jwt_token, ex=3600 * 24 * 7)
 
 
+
 def get_jwt_token(telegram_id):
     key = f"jwt:{telegram_id}"
 
-    return redis_client.get(key).decode("utf-8") if redis_client.exists(key) else None
+    return (
+        redis_client.get(key).decode("utf-8")
+        if redis_client.exists(key)
+        else None
+    )
+

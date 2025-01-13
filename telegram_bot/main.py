@@ -5,12 +5,22 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
 from telebot import TeleBot, types
+from telegram_bot.redis_client import (
+  save_telegram_id, 
+  save_jwt_token, 
+  get_jwt_token
+)
 
-from telegram_bot.redis_client import save_telegram_id, save_jwt_token, get_jwt_token
 import requests
 
 
-bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+bot = None
+if TELEGRAM_TOKEN and os.getenv("DJANGO_ENV") != "local":
+    bot = TeleBot(TELEGRAM_TOKEN)
+
+# bot = TeleBot(os.getenv("TELEGRAM_TOKEN"))
 
 API_BASE_URL = "http://library:8000/api"
 
@@ -24,7 +34,8 @@ def is_authenticated(telegram_id):
 
 def authenticate_user(email, password):
     response = requests.post(
-        f"{API_BASE_URL}/users/token/", json={"email": email, "password": password}
+        f"{API_BASE_URL}/users/token/",
+        json={"email": email, "password": password},
     )
 
     if response.status_code == 200:
@@ -44,7 +55,9 @@ def main(message):
         bot.send_message(telegram_id, "✅ You are already logged in!")
         show_menu(telegram_id)
     else:
-        bot.send_message(telegram_id, "👋 Welcome! Please log in. Enter your email:")
+        bot.send_message(
+            telegram_id, "👋 Welcome! Please log in. Enter your email:"
+        )
         bot.register_next_step_handler(message, process_email)
 
 
@@ -74,7 +87,8 @@ def process_password(message, email):
 
     else:
         bot.send_message(
-            telegram_id, "Authorization error. Check your details and try again."
+            telegram_id,
+            "Authorization error. Check your details and try again.",
         )
         main(message)
 
@@ -90,7 +104,10 @@ def show_menu(telegram_id):
         ),
         types.InlineKeyboardButton("📚 My books", callback_data="my_books"),
     )
-    bot.send_message(telegram_id, "Here's what I can do for you:", reply_markup=markup)
+    bot.send_message(
+        telegram_id, "Here's what I can do for you:", reply_markup=markup
+    )
+
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "menu")
@@ -129,7 +146,9 @@ def process_book_search(message):
     book = search_book_by_title(title)
 
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("🏠 Back to menu", callback_data="menu"))
+    markup.add(
+        types.InlineKeyboardButton("🏠 Back to menu", callback_data="menu")
+    )
 
     if book:
         book_markup = types.InlineKeyboardMarkup()
@@ -159,16 +178,18 @@ def handle_my_books(call):
     jwt_token = get_jwt_token(telegram_id)
 
     headers = {"Authorization": f"Bearer {jwt_token}"}
-    response = requests.get(f"{API_BASE_URL}/booking/borrowings/", headers=headers)
+    response = requests.get(
+        f"{API_BASE_URL}/booking/borrowings/", headers=headers
+    )
 
     if response.status_code == 200 and response.json():
         borrowings = response.json()
         for borrowing in borrowings:
             bot.send_message(
                 call.message.chat.id,
-                f"Book: {borrowing["book"]["title"]}\n"
-                f"Booking Date: {borrowing["borrow_date"]}\n"
-                f"Expected Return Date: {borrowing["expected_return_date"]}\n",
+                f"Book: {borrowing['book']['title']}\n"
+                f"Booking Date: {borrowing['borrow_date']}\n"
+                f"Expected Return Date: {borrowing['expected_return_date']}\n",
             )
     else:
         bot.send_message(call.message.chat.id, "You have no active bookings.")
@@ -198,12 +219,9 @@ def book_a_book(telegram_id, book_id, expected_return_date):
 
     data = {"book": str(book_id), "expected_return_date": expected_return_date}
 
-    print("Request Headers:", headers)
-    print("Request Data:", data)
-
     try:
         response = requests.post(
-            f"{API_BASE_URL}/booking/borrowings/", json=data, headers=headers
+            f"{API_BASE_URL}/borrowings/", json=data, headers=headers
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:

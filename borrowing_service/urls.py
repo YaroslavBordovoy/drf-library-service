@@ -6,13 +6,13 @@ from borrowing_service.views import BorrowingViewSet
 
 router = routers.DefaultRouter()
 
-router.register("borrowings", BorrowingViewSet, "borrowing")
+router.register("", BorrowingViewSet, "borrowing")
 
 urlpatterns = [
     path(
         "borrowings/<int:pk>/return/",
         BorrowingViewSet.as_view({"post": "return_book"}),
-        name="borrowing-return"
+        name="borrowing-return",
     ),
 ]
 

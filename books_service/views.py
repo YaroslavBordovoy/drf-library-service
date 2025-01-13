@@ -1,10 +1,10 @@
 from rest_framework import generics
+from books_service.models import Book
+from books_service.paginations import BooksPagination
+from books_service.serializers import BookListSerializer, BookDetailSerializer
+from books_service.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import AllowAny
 
-from .models import Book
-from .paginations import BooksPagination
-from .serializers import BookListSerializer, BookDetailSerializer
-from .permissions import IsAdminOrReadOnly
 
 
 class BookCreateView(generics.CreateAPIView):

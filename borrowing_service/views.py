@@ -9,6 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
+from books_service.permissions import IsAdminOrReadOnly
 from borrowing_service.filters import BorrowingFilter
 from borrowing_service.paginations import BorrowingPagination
 from borrowing_service.serializers import (
@@ -26,7 +27,7 @@ class BorrowingViewSet(
     mixins.RetrieveModelMixin,
     GenericViewSet,
 ):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.all().order_by("id")
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = BorrowingFilter
     permission_classes = (IsAuthenticated,)
