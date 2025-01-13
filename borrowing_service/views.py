@@ -27,7 +27,7 @@ class BorrowingViewSet(
     mixins.RetrieveModelMixin,
     GenericViewSet,
 ):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.all().order_by("id")
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = BorrowingFilter
     permission_classes = (IsAuthenticated,)
