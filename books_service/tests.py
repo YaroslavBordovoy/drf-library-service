@@ -1,8 +1,12 @@
 from django.test import TestCase
+from rest_framework import status
+from django.urls import reverse
+
 from .models import Book, Cover
+from accounts.models import User
 from django.core.exceptions import ValidationError
 
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from .serializers import BookDetailSerializer
 
 
@@ -115,3 +119,131 @@ class BookSerializerTest(APITestCase):
             serializer.errors["author"][0],
             "Author name must contain only letters and spaces.",
         )
+
+
+class BookCreateViewTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="admin@example.com", password="testpassword"
+        )
+        self.client.login(email="admin@example.com", password="testpassword")
+        self.url = reverse("book:book-create")
+
+    def test_create_book(self):
+        data = {
+            "title": "Test Book",
+            "author": "Test Author",
+            "cover": "SOFT",
+            "inventory": 5,
+            "daily_fee": 10.00,
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["title"], data["title"])
+
+    def test_create_book_with_invalid_data(self):
+        data = {
+            "title": "",
+            "author": "Test Author",
+            "cover": "SOFT",
+            "inventory": 5,
+            "daily_fee": -10.00,
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("title", response.data)
+        self.assertIn("daily_fee", response.data)
+
+
+class BookListViewTest(APITestCase):
+    def setUp(self):
+        self.book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            cover=Cover.SOFT.name,
+            inventory=10,
+            daily_fee=5.00,
+        )
+        self.url = reverse("book:book-list")
+
+    def test_get_books(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(response.data["results"][0]["title"], self.book.title)
+
+
+class BookDetailViewTest(APITestCase):
+    def setUp(self):
+        self.book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            cover=Cover.SOFT.name,
+            inventory=10,
+            daily_fee=5.00,
+        )
+        self.url = reverse("book:book-detail", args=[self.book.pk])
+
+    def test_get_book_detail(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["title"], self.book.title)
+
+
+class BookUpdateViewTest(APITestCase):
+    def setUp(self):
+        self.book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            cover=Cover.SOFT.name,
+            inventory=10,
+            daily_fee=5.00,
+        )
+        self.url = reverse("book:book-update", args=[self.book.pk])
+
+    def test_update_book(self):
+        data = {
+            "title": "Updated Test Book",
+            "author": "Updated Author",
+            "cover": "HARD",
+            "inventory": 15,
+            "daily_fee": 12.00,
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["title"], data["title"])
+
+    def test_update_book_invalid_data(self):
+        data = {
+            "title": "",
+            "author": "Updated Author",
+            "cover": "HARD",
+            "inventory": 15,
+            "daily_fee": -12.00,
+        }
+        response = self.client.put(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("title", response.data)
+        self.assertIn("daily_fee", response.data)
+
+
+class BookDeleteViewTest(APITestCase):
+    def setUp(self):
+        self.book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            cover=Cover.SOFT.name,
+            inventory=10,
+            daily_fee=5.00,
+        )
+        self.url = reverse("book:book-delete", args=[self.book.pk])
+
+    def test_delete_book(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Book.objects.filter(pk=self.book.pk).exists())
+
+    def test_delete_book_not_found(self):
+        url = reverse("book:book-delete", args=[999])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
