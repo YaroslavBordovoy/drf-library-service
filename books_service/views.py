@@ -20,6 +20,7 @@ class BookListView(generics.ListAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookListSerializer
     pagination_class = BooksPagination
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class BookDetailView(generics.RetrieveAPIView, BaseBookPermissionView):
@@ -31,7 +32,6 @@ class BookUpdateView(generics.UpdateAPIView, BaseBookPermissionView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
     permission_classes = (IsAdminOrReadOnly,)
-
 
 
 class BookDeleteView(generics.DestroyAPIView, BaseBookPermissionView):
