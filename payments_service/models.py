@@ -4,6 +4,7 @@ import stripe
 from django.conf import settings
 from django.db import models
 
+
 STRIPE_URL = "http://127.0.0.1:8000/"
 stripe.api_key = settings.STRIPE_SECRET_KEY
 

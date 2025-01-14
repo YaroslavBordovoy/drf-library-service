@@ -138,3 +138,11 @@ To manually start Celery without Docker:
 celery -A core worker --loglevel=info
 celery -A core beat --loglevel=info
 ```
+
+#### Tests
+![img.png](img.png)
+#### Trello
+![img_1.png](img_1.png)
+#### TelegramBot
+![img_2.png](img_2.png)
+

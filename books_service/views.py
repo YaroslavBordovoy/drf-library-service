@@ -4,7 +4,6 @@ from books_service.paginations import BooksPagination
 from books_service.serializers import BookListSerializer, BookDetailSerializer
 from books_service.permissions import IsAdminOrReadOnly
 
-
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer

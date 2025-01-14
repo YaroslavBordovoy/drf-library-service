@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from telegram.ext import Application
 import os
 
+
 load_dotenv()
 
 if os.getenv("DJANGO_ENV") == "local":

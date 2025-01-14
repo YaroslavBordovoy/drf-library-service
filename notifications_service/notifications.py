@@ -3,7 +3,6 @@ from payments_service.models import Payment
 from telegram_bot.redis_client import get_telegram_id
 
 
-
 def notify_booking_created(instance: Borrowing):
     """
     Notification of successful booking
