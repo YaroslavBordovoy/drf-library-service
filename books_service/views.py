@@ -3,8 +3,6 @@ from books_service.models import Book
 from books_service.paginations import BooksPagination
 from books_service.serializers import BookListSerializer, BookDetailSerializer
 from books_service.permissions import IsAdminOrReadOnly
-from rest_framework.permissions import AllowAny
-
 
 
 class BookCreateView(generics.CreateAPIView):
@@ -17,7 +15,7 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookListSerializer
     pagination_class = BooksPagination
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class BookDetailView(generics.RetrieveAPIView):
