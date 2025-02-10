@@ -1,0 +1,98 @@
+services:
+  library:
+    build:
+      context: .
+    command: >
+      sh -c "python manage.py makemigrations &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    restart: always
+
+  telegram_bot:
+    build:
+      context: .
+    command: python telegram_bot/main.py
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=core.settings
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - redis
+      - library
+    volumes:
+      - .:/app
+    networks:
+      - default
+
+  db:
+    image: postgres:16.0-alpine
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:$PGDATA
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery:
+    build:
+      context: .
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    restart: always
+
+  celery-beat:
+    build:
+      context: .
+    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    restart: always
+
+volumes:
+  db-data:
